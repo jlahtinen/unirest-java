@@ -25,19 +25,29 @@
 
 package kong.unirest.core.json;
 
+import kong.unirest.jackson.JacksonEngine;
 import kong.unirest.core.UnirestConfigException;
 
-import java.util.ServiceLoader;
+// import java.util.ServiceLoader;
 
 public class CoreFactory {
-    private static final JsonEngine ENGINE;
-    static {
-        ENGINE = ServiceLoader.load(JsonEngine.class)
+
+    private static JsonEngine engine;
+
+    public static JsonEngine getCore() {
+        if(engine != null){
+            return engine;
+        }
+
+        /*
+        engine = ServiceLoader.load(JsonEngine.class)
                 .findFirst()
                 .orElse(null);
-    }
-    public static JsonEngine getCore() {
-        if(ENGINE == null){
+         */
+
+        engine = new JacksonEngine();
+
+        if(engine == null){
             throw new UnirestConfigException("No Json Parsing Implementation Provided\n" +
                     "Please add a dependency for a Unirest JSON Engine. This can be one of:" +
                     "\n" +
@@ -55,6 +65,6 @@ public class CoreFactory {
                     "  <version>${latest-version}</version>\n" +
                     "</dependency>)");
         }
-        return ENGINE;
+        return engine;
     }
 }
